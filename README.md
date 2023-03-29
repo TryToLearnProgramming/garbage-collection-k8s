@@ -61,6 +61,7 @@ kubectl apply -f manifests/
 ----------------------------------------------------------------------------------------------------------------------------------
 
 **Why not use Daemonset instead of Jobs ?**
+
  Daemonset has the advantage of deploying pods in all the nodes and might have made the deployment simpler, but the biggest dis-advantage is that daemonset is persistent.
  Therefore one has to delete the daemonset deployment manually after the docker images are removed. This can be troublesome to configure when running through:
  > when using CI/CD pipelines it will need manual intervention fer deleting the daemonsets

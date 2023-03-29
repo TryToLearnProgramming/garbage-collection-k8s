@@ -6,12 +6,12 @@ Best Use Cases: Deploying the manifest files through pipeline along with other d
 Kubernetes Job manifest files to prune old unused docker images that are left from pervious revisions of deployments/replica-sets.
 
 # Advantages
-There are many existing solutions that delete unused docker images from kubernetes nodes but most of them need to have deployments/jobs/cronjobs runnning continuously or when the nodes already uses a certain high percentage of disk space. This can cause a lot of unecessary resource usage and increase in costs specially in cloud deployments.
+There are many existing solutions that delete unused docker images from kubernetes nodes but most of them need to have deployments/jobs/cronjobs runnning continuously or is only deployed when the nodes already uses a certain high percentage of disk space. This can cause a lot of unecessary resource usage and increase in costs specially in cloud deployments.
 
 This deployment has certain advantages over the existing solutions:
 > 1. Can be run manually whenever needed just by kubectl apply.
 > 2. No special privileges needed.
-> 3. All resources gets deployed after the images are deleted mith a maximum limit of 5 minutes.
+> 3. All garbage-collection resources gets removed after the images are deleted mith a maximum limit of 5 minutes. This helps in not putting extra burden on the k8s nodes.
 > 4. No manual configurations needs to be done (save minor one detailed below).
 > 5. Optimized for deploying through CI/CD pipelines and pull based tools like ArgoCD with pre-configured hooks.
 

@@ -1,7 +1,7 @@
 # Kuberentes configuration files to remove unused Docker Images from K8s nodes automatically.
 Best Use Cases: Deploying the manifest files through pipeline along with other deployments or as pre-configured hook.
 
-K8s-garbage-collection
+**K8s-garbage-collection**
 
 Kubernetes Job manifest files to prune old unused docker images that are left from pervious revisions of deployments/replica-sets.
 
@@ -17,7 +17,7 @@ This deployment has certain advantages over the existing solutions:
 
 ----------------------------------------------------------------------------------------------------------------------------------
 
-kubernetes-docker Branch
+**kubernetes-docker Branch**
 
 For kubernetes version <= 1.22 which runs docker engine as the container runtime.
 
@@ -25,7 +25,7 @@ For kubernetes version <= 1.22 which runs docker engine as the container runtime
 
 ----------------------------------------------------------------------------------------------------------------------------------
 
-kubernetes-containerd Branch
+**kubernetes-containerd Branch**
 
 For kubernetes version >= 1.23 which runs containerd as the container runtime.
 
@@ -33,7 +33,7 @@ For kubernetes version >= 1.23 which runs containerd as the container runtime.
 
 ----------------------------------------------------------------------------------------------------------------------------------
 
-Pod Anti-affinity & PriorityClass in k8s Job
+**Pod Anti-affinity & PriorityClass in k8s Job**
 
 The kubernetes job needs to run in all the nodes to clean all the nodes of unused images. This is done through :-
 1. Pod Anti-affinity in kubernetes job
@@ -43,7 +43,7 @@ Both configurations are used to ensure the pods for the job run in all the nodes
 
 ----------------------------------------------------------------------------------------------------------------------------------
 
-What changes need to be made in the files ?
+**What changes need to be made in the files ?**
 
 1. Change Kubernetes job spec of:
       completions: <value>
@@ -60,7 +60,7 @@ kubectl apply -f manifests/
 
 ----------------------------------------------------------------------------------------------------------------------------------
 
-Why not use Daemonset instead of Jobs ?
+**Why not use Daemonset instead of Jobs ?**
  Daemonset has the advantage of deploying pods in all the nodes and might have made the deployment simpler, but the biggest dis-advantage is that daemonset is persistent.
  Therefore one has to delete the daemonset deployment manually after the docker images are removed. This can be troublesome to configure when running through:
  > when using CI/CD pipelines it will need manual intervention fer deleting the daemonsets

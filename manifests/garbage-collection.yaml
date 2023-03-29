@@ -1,8 +1,3 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: garbage-collection
----
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -39,13 +34,20 @@ spec:
 
             containers:
             - name: garbagecollectionjob
-              image: alpine:latest
-              command: ["/bin/sh", "-c", "apk add --no-cache docker && docker image prune -af && sleep 200"]
+              image: alpine:edge
+              command: ["/bin/sh", "-c", "apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing cri-tools bash && ./clean.sh && sleep 300"] # && crictl -r unix:///run/containerd/containerd.sock rmi --prune"]
               volumeMounts:
               - name: docker-mount
-                mountPath: /var/run/docker.sock
+                mountPath: /run/containerd/containerd.sock
+              - name: script
+                mountPath: /clean.sh
+                subPath: clean.sh
 
             volumes:
             - name: docker-mount
               hostPath:
-                path: /var/run/docker.sock
+                path: /run/containerd/containerd.sock
+            - name: script
+              configMap:
+                name: garbagecollection-configmap
+                defaultMode: 0777

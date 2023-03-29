@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: garbage-collection
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: garbagecollection-configmap
+  namespace: garbage-collection
+data:
+  clean.sh: |
+    #!/bin/bash
+    images=( `crictl -r unix:///run/containerd/containerd.sock images | awk '{print $3}'` )
+    con=( `crictl -r unix:///run/containerd/containerd.sock ps | awk '{print $2}'` )
+    for i in ${images[@]};
+    do
+    count=0
+    for j in ${con[@]};
+    do
+        if [ $i = $j ];
+        then
+        count=1
+        break
+        fi
+    done
+    if [ $count = 0 ];
+    then
+        echo $i
+        crictl -r unix:///run/containerd/containerd.sock rmi $i
+    fi
+    done

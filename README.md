@@ -1,2 +1,65 @@
-# K8s-garbage-collection
+# Kuberentes configuration files to remove unused Docker Images from K8s nodes automatically.
+Best Use Cases: Deploying the manifest files through pipeline along with other deployments or as pre-configured hook.
+
+# Advantages
+There are many existing solutions that delete unused docker images from kubernetes nodes but most of them need to have deployments/jobs/cronjobs runnning continuously or when the nodes already uses a certain high percentage of disk space. This can cause a lot of unecessary resource usage and increase in costs specially in cloud deployments.
+
+This deployment has certain advantages over the existing solutions:
+1. Can be run manually whenever needed just by kubectl apply.
+2. No special privileges needed.
+3. All resources gets deployed after the images are deleted mith a maximum limit of 5 minutes.
+4. No manual configurations needs to be done (save minor one detailed below).
+
+
+
+K8s-garbage-collection
+
 Kubernetes Job manifest files to prune old unused docker images that are left from pervious revisions of deployments/replica-sets.
+----------------------------------------------------------------------------------------------------------------------------------
+
+kubernetes-docker Branch
+
+For kubernetes version <= 1.22 which runs docker engine as the container runtime.
+
+
+> garbage-collection.yaml
+
+The manifest files mounts the unix socket of the docker daemon in the pods ran through the k8s job. Docker prune command is used to remove all unused (tagged & dangling) images.
+----------------------------------------------------------------------------------------------------------------------------------
+
+kubernetes-containerd Branch
+
+For kubernetes version >= 1.23 which runs containerd as the container runtime.
+
+> garbage-collection.yaml
+
+The manifest files mounts the unix socket of the containerd daemon in the pods ran through the k8s job. crictl command-line tool is used to remove all unused (tagged & dangling) images.
+----------------------------------------------------------------------------------------------------------------------------------
+
+Pod Anti-affinity & PriorityClass in k8s Job
+
+The kubernetes job needs to run in all the nodes to clean all the nodes of unused images. This is done through :-
+1. Pod Anti-affinity in kubernetes job
+2. High priorityClass for the deployment pods
+
+Both configurations are used to ensure the pods for the job run in all the nodes even if the no of pods is saturated for a particular node.
+----------------------------------------------------------------------------------------------------------------------------------
+
+What changes need to be made in the files ?
+
+1. Change Kubernetes job spec of:
+      completions: <value>
+      parallelism: <values>
+   Replace <value> to the number of nodes your Cluster is running. You can also put values higher than the current number of nodes to take account of cluster autoscaling.
+----------------------------------------------------------------------------------------------------------------------------------
+
+# How to run ?
+
+Run the mainifest files situated inside manifests dir as:
+
+kubectl apply -f manifests/
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+

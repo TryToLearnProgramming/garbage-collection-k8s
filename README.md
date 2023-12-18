@@ -1,0 +1,1 @@
+# garbage-collection-k8s
